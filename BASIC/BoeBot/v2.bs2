@@ -1,0 +1,48 @@
+' {$STAMP BS2} ' Stamp directive.
+' {$PBASIC 2.5} ' PBASIC directive.
+DEBUG "Program Running!"
+' -----[ Variables ]----------------------------------------------------------
+pulseCount VAR Byte ' FOR...NEXT loop counter.
+' -----[ Main Routine ]-------------------------------------------------------
+DO
+IF (IN5 = 0) AND (IN7 = 0) THEN ' Both whiskers detect obstacle
+GOSUB Back_Up ' Back up & U-turn (left twice)
+GOSUB Turn_Left
+GOSUB Turn_Left
+ELSEIF (IN5 = 0) THEN ' Left whisker contacts
+GOSUB Back_Up ' Back up & turn right
+GOSUB Turn_Right
+ELSEIF (IN7 = 0) THEN ' Right whisker contacts
+GOSUB Back_Up ' Back up & turn left
+GOSUB Turn_Left
+ELSE ' Both whiskers 1, no contacts
+GOSUB Forward_Pulse ' Apply a forward pulse
+ENDIF ' and check again
+LOOP
+' -----[ Subroutines ]--------------------------------------------------------
+Forward_Pulse: ' Send a single forward pulse.
+PULSOUT 13,850
+PULSOUT 12,650
+PAUSE 20
+RETURN
+Turn_Left: ' Left turn, about 90-degrees.
+FOR pulseCount = 0 TO 20
+PULSOUT 13, 700
+PULSOUT 12, 700
+PAUSE 20
+NEXT
+RETURN
+Turn_Right:
+FOR pulseCount = 0 TO 20 ' Right turn, about 90-degrees.
+PULSOUT 13, 800
+PULSOUT 12, 800
+PAUSE 20
+NEXT
+RETURN
+Back_Up: ' Back up.
+FOR pulseCount = 0 TO 40
+PULSOUT 13, 650
+PULSOUT 12, 850
+PAUSE 20
+NEXT
+RETURN
