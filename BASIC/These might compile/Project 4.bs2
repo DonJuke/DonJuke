@@ -1,0 +1,254 @@
+'Jonathan Duke
+'Project #4
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+
+time VAR Word
+timecheck VAR Word
+flashrate VAR Word
+counter VAR Word
+
+debugvar VAR Word
+
+LEDpower PIN 11
+Red PIN 12
+Green PIN 10
+Blue PIN 9
+
+Main:
+DO
+HIGH LEDpower
+HIGH 15
+PAUSE 10
+RCTIME 15, 1, time
+time = time * (1000/59)  'Scale .
+time = time + 234  'Offset.
+'DEBUG ? flashrate
+'DEBUG CR, "time = ", DEC5 time
+
+'9
+IF (time<(679/2)) THEN
+GOSUB Nine
+HIGH Green:LOW Red:HIGH Blue
+FOR counter = 0 TO 10
+PULSOUT 13, 250
+PAUSE 20
+NEXT
+'DO
+'GOSUB racecartime
+'DEBUG ? time
+'LOOP
+ENDIF
+
+IF (time>340) AND (time<429) THEN
+GOSUB Eight
+FOR counter = 0 TO 10
+PULSOUT 13, 354
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+'DEBUG ? time
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 75
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 75
+LOOP UNTIL (time<(679/2)) OR (time>429)
+ENDIF
+
+IF (time>429) AND (time<(1037/2)) THEN
+GOSUB Seven
+FOR counter = 0 TO 10
+PULSOUT 13, 458
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 100
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 100
+LOOP UNTIL (time<429) OR (time>(1037/2))
+ENDIF
+
+IF (time>(1037/2)) AND (time<608) THEN
+GOSUB Six
+FOR counter = 0 TO 10
+PULSOUT 13, 562
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 125
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 125
+LOOP UNTIL (time<(1037/2)) OR (time>608)
+ENDIF
+
+IF (time>608) AND (time<(1395/2)) THEN
+GOSUB Five
+FOR counter = 0 TO 10
+PULSOUT 13, 666
+PAUSE 20
+NEXT
+GOSUB racecartime
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 150
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 150
+LOOP UNTIL (time<608) OR (time>(1395/2))
+ENDIF
+
+IF (time>(1395/2)) AND (time<787) THEN
+GOSUB Four
+FOR counter = 0 TO 10
+PULSOUT 13, 769
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 175
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 175
+LOOP UNTIL (time<(1395/2)) OR (time>787)
+ENDIF
+
+IF (time>787) AND (time<(1753/2)) THEN
+GOSUB Three
+FOR counter = 0 TO 10
+PULSOUT 13, 873
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 200
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 200
+LOOP UNTIL (time<787) OR (time>(1753/2))
+ENDIF
+
+IF (time>(1753/2)) AND (time<966) THEN
+GOSUB Two
+FOR counter = 0 TO 10
+PULSOUT 13, 977
+PAUSE 20
+NEXT
+
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 225
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 225
+LOOP UNTIL (time<(1753/2)) OR (time>966)
+ENDIF
+
+
+IF (time>966) AND (time<(2111/2)) THEN
+GOSUB One
+FOR counter = 0 TO 10
+'DEBUG ? counter
+PULSOUT 13, 1081
+PAUSE 20
+NEXT
+DO
+GOSUB racecartime
+HIGH Green:HIGH Red:LOW Blue
+PAUSE 250
+HIGH Green:HIGH Red:HIGH Blue
+GOSUB racecartime
+PAUSE 250
+LOOP UNTIL (time<966) OR (time>(2111/2))
+ENDIF
+
+IF (time>(2111/2))THEN
+GOSUB Zero
+DO
+GOSUB racecartime
+'DEBUG ? time
+LOW Green:HIGH Red:HIGH Blue
+FOR counter = 0 TO 10
+PULSOUT 13, 1185
+PAUSE 20
+NEXT
+
+LOOP UNTIL (time<(2111/2))
+ENDIF
+
+LOOP
+
+
+'zoom zoom
+racecartime:
+HIGH 15
+PAUSE 10
+RCTIME 15, 1, time
+time = time * (1000/59)  'Scale .
+time = time + 234
+RETURN
+
+
+
+Zero:
+HIGH 0:HIGH 1:HIGH 2:LOW 3:LOW 4:HIGH 5:HIGH 6:HIGH 7
+HIGH Red:LOW Green:HIGH Blue
+
+RETURN
+
+One:
+LOW 0:LOW 1:HIGH 2:LOW 3:LOW 4:LOW 5:LOW 6:HIGH 7
+
+RETURN
+
+Two:
+HIGH 0:HIGH 1:LOW 2:LOW 3:HIGH 4:LOW 5:HIGH 6:HIGH 7
+
+RETURN
+
+Three:
+LOW 0:HIGH 1:HIGH 2:LOW 3:HIGH 4:LOW 5:HIGH 6:HIGH 7
+
+RETURN
+
+Four:
+LOW 0:LOW 1:HIGH 2:LOW 3:HIGH 4:HIGH 5:LOW 6:HIGH 7
+
+RETURN
+
+Five:
+LOW 0:HIGH 1:HIGH 2:LOW 3:HIGH 4:HIGH 5:HIGH 6:LOW 7
+
+RETURN
+
+Six:
+HIGH 0:HIGH 1:HIGH 2:LOW 3:HIGH 4:HIGH 5:HIGH 6:LOW 7
+
+RETURN
+
+Seven:
+LOW 0:LOW 1:HIGH 2:LOW 3:LOW 4:LOW 5:HIGH 6:HIGH 7
+
+RETURN
+
+Eight:
+HIGH 0:HIGH 1:HIGH 2:LOW 3:HIGH 4:HIGH 5:HIGH 6:HIGH 7
+
+RETURN
+
+Nine:
+LOW 0:HIGH 1:HIGH 2:LOW 3:HIGH 4:HIGH 5:HIGH 6:HIGH 7
+LOW Red:HIGH Green:HIGH Blue
+RETURN

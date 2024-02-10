@@ -1,0 +1,81 @@
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+butt1 VAR nib
+butt2 VAR nib
+counter VAR word
+
+do
+Main
+loop
+
+Main:
+FOR counter = 0 TO 65535
+
+IF IN15=1 then
+PAUSE 100
+butt1=butt1+1
+IF butt1=4 THEN butt1=0
+IF butt1=1 THEN GOSUB Intermittent
+IF butt1=2 THEN GOSUB Medium
+IF butt1=3 THEN GOSUB Fast1
+IF butt1=0 THEN GOSUB Off
+endif
+
+IF IN14=1 then
+PAUSE 100
+butt2=butt2+1
+IF butt2=6 THEN butt2=1
+IF butt2=1 THEN GOSUB Veryslow
+IF butt2=2 THEN GOSUB Slow
+IF butt2=3 THEN GOSUB Medium
+IF butt2=4 THEN GOSUB Fast2
+IF butt2=5 THEN GOSUB Veryfast
+ENDIF
+
+next
+
+IfButt1:
+IF IN15=1 THEN
+PAUSE 100
+butt1=butt1+1
+IF butt1=4 THEN butt1=0
+IF butt1=1 THEN GOSUB Intermittent
+IF butt1=2 THEN GOSUB Medium
+IF butt1=3 THEN GOSUB Fast1
+IF butt1=0 THEN GOSUB Off
+endif
+
+Ifbutt2:
+IF IN14=1 THEN
+PAUSE 100
+butt2=butt2+1
+IF butt2=6 THEN butt2=1
+IF butt2=1 THEN GOSUB Veryslow
+IF butt2=2 THEN GOSUB Slow
+IF butt2=3 THEN GOSUB Medium
+IF butt2=4 THEN GOSUB Fast2
+IF butt2=5 THEN GOSUB Veryfast
+ENDIF
+
+Off:
+GOSUB Servodown
+FOR counter = 0 TO 65535 then
+IF IN15=1 then
+PAUSE 100
+if
+next
+
+Servoup:
+FOR coutner = 0 TO 25
+PULSOUT 13, 917
+PAUSE 20
+next
+
+Servodown:
+FOR coutner = 0 TO 25
+PULSOUT 13, 250
+PAUSE 20
+next
+
+

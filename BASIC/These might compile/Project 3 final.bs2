@@ -1,0 +1,283 @@
+'Jonathan Duke
+'Project #3
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+'pb1-4 is used to stores presses for each button
+pb1 VAR Nib
+pb2 VAR Nib
+pb3 VAR Nib
+pb4 VAR Nib
+'pbnum1-4 is the code for the gate
+pb1num VAR Nib
+pb2num VAR Nib
+pb3num VAR Nib
+pb4num VAR Nib
+'Used to check if the totalpress is too high
+pbnumtotal  VAR Nib
+'Every press is counted and added via GOSUB pressesadd
+totalpresses VAR Nib
+'Used to reduce repition of HIGH & LOW
+Redloop VAR Nib
+Yellowloop VAR Nib
+'Used in FOR NEXT
+counter VAR Word
+'Pin Directives for LEDs
+Red PIN 15
+Yellow PIN 14
+Green PIN 13
+
+'PUSH BUTTONS MUST HAVE A PAUSE 100 AFTER BEING CHECKED, BUTTONS WILL NOT WORK IF USED OTHERWISE
+
+
+
+''DEBUG CLS, "Choose amount of presses for Push Button 1: "
+''DEBUGIN DEC pb1num
+''DEBUG CLS, "Choose amount of presses for Push Button 2: "
+''DEBUGIN DEC pb2num
+''DEBUG CLS, "Choose amount of presses for Push Button 3: "
+''DEBUGIN DEC pb3num
+''DEBUG CLS, "Choose amount of presses for Push Button 4: "
+''DEBUGIN DEC pb4num
+''DEBUG CLS
+'pbnumtotal= pb1num+pb2num+pb3num+pb4num
+''DEBUG ? pbnumtotal
+'IF (pbnumtotal > 12) THEN 'DEBUG "Error, too many presses, max allowed presses = 12. Restart program"
+'IF (pbnumtotal < 9) THEN 'DEBUG "Error, too many presses, min allowed presses = 9. Restart program"
+
+pb1num=4
+pb2num=3
+pb3num=2
+pb4num=1
+
+'used to check if the totalpress is too high
+pbnumtotal= pb1num+pb2num+pb3num+pb4num
+
+DO
+GOSUB Resetvar
+GOSUB Main
+LOOP
+
+Main:
+HIGH Red
+FOR counter = 0 TO 65535
+IF (IN0=1) THEN
+PAUSE 100
+GOSUB Emergency
+ENDIF
+IF (IN1=1) THEN
+PAUSE 100
+pb1=1
+'DEBUG CLS, ? pb1
+GOSUB pressesadd
+GOSUB PB1add
+ENDIF
+IF (IN2=1) OR (IN3=1) OR (IN4=1) THEN
+PAUSE 100
+GOSUB pressesadd
+ENDIF
+NEXT
+
+
+PB1add:
+IF (totalpresses = pbnumtotal)  AND  (pb1 >< pb1num) THEN GOSUB youfdup
+IF (pb1=pb1num) THEN GOSUB PB2add
+IF (totalpresses = pbnumtotal)  AND  (pb1 >< pb1num) THEN GOSUB youfdup
+FOR counter = 0 TO 65535
+IF (IN0=1) THEN
+PAUSE 100
+GOSUB Emergency
+ENDIF
+IF (IN1=1) THEN
+PAUSE 100
+pb1=pb1+1
+'DEBUG ? pb1
+GOSUB pressesadd
+GOSUB PB1add
+ENDIF
+IF (IN2=1) OR (IN3=1) OR (IN4=1) THEN
+PAUSE 100
+GOSUB pressesadd
+ENDIF
+NEXT
+RETURN
+
+PB2add:
+IF (totalpresses = pbnumtotal)  AND  (pb1 >< pb1num) THEN GOSUB youfdup
+IF (pb2=pb2num) THEN GOSUB PB3add
+IF (totalpresses = pbnumtotal)  AND  (pb1 >< pb1num) THEN GOSUB youfdup
+FOR counter = 0 TO 65535
+IF (IN0=1) THEN
+PAUSE 100
+GOSUB Emergency
+ENDIF
+IF (IN2=1) THEN
+PAUSE 100
+pb2=pb2+1
+'DEBUG ? pb2
+GOSUB pressesadd
+GOSUB PB2add
+ENDIF
+IF (IN1=1) OR (IN3=1) OR (IN4=1) THEN
+PAUSE 100
+GOSUB pressesadd
+ENDIF
+NEXT
+RETURN
+
+PB3add:
+IF (totalpresses = pbnumtotal) THEN GOSUB youfdup
+IF (pb3=pb3num) THEN GOSUB PB4add
+IF (totalpresses = pbnumtotal) THEN GOSUB youfdup
+FOR counter = 0 TO 65535
+IF (IN0=1) THEN
+PAUSE 100
+GOSUB Emergency
+ENDIF
+IF (IN3=1) THEN
+PAUSE 100
+pb3=pb3+1
+'DEBUG ? pb3
+GOSUB pressesadd
+GOSUB PB3add
+ENDIF
+IF (IN1=1) OR (IN2=1) OR (IN4=1) THEN
+PAUSE 100
+GOSUB pressesadd
+ENDIF
+NEXT
+RETURN
+
+PB4add:
+IF (pb4=pb4num) THEN GOSUB Gate
+IF (totalpresses = pbnumtotal) THEN GOSUB youfdup
+FOR counter = 0 TO 65535
+IF (totalpresses = pbnumtotal) THEN GOSUB youfdup
+IF (IN0=1) THEN
+PAUSE 100
+GOSUB Emergency
+ENDIF
+IF (IN4=1) THEN
+PAUSE 100
+pb4=pb4+1
+'DEBUG ? pb4
+GOSUB pressesadd
+GOSUB PB4add
+ENDIF
+IF (IN1=1) OR (IN2=1) OR (IN3=1) THEN
+PAUSE 100
+GOSUB pressesadd
+ENDIF
+NEXT
+RETURN
+
+pressesadd:
+IF (pb1><pb1num) OR (pb2><pb2num) OR (pb3><pb3num) OR (pb4><pb4num) THEN
+IF (totalpresses=pbnumtotal) THEN GOSUB youfdup
+ENDIF
+totalpresses=totalpresses+1
+'DEBUG ? totalpresses
+IF (pb1><pb1num) OR (pb2><pb2num) OR (pb3><pb3num) OR (pb4><pb4num) THEN
+IF (totalpresses=pbnumtotal) THEN GOSUB youfdup
+ENDIF
+FOR counter = 1 TO 100
+IF (IN0=1) THEN GOSUB Emergency
+NEXT
+RETURN
+
+Gate:
+FOR counter= 1 TO 65535
+IF IN0=1 THEN GOSUB Emergency
+IF IN0=0 THEN
+GOSUB Yellowflash
+HIGH Red
+GOSUB Servoup
+LOW Red
+FOR counter = 1 TO 6667
+HIGH Green
+IF IN0=1 THEN GOSUB Emergency
+NEXT
+LOW Green
+GOSUB Yellowflash
+HIGH Red
+GOSUB Servodown
+'DEBUG CLS
+GOSUB Resetvar
+ENDIF
+GOTO Main
+NEXT
+RETURN
+
+Emergency:
+LOW Yellow
+'DEBUG CLS, "Emergency ON"
+FOR counter = 1 TO 20
+PULSOUT 12, 750
+PAUSE 20
+NEXT
+LOW Red
+HIGH Green
+FOR counter = 1 TO 65535
+IF (IN0=1) THEN
+LOW Green
+HIGH Red
+FOR counter = 1 TO 20
+PULSOUT 12, 250
+PAUSE 20
+NEXT
+'DEBUG CLS, "Emergency OFF"
+GOSUB Resetvar
+GOSUB Main
+ENDIF
+NEXT
+
+youfdup:
+Redloop=0
+GOSUB Resetvar
+DO
+LOW Red
+PAUSE 100
+HIGH Red
+PAUSE 100
+Redloop=Redloop+1
+LOOP UNTIL Redloop=3
+'DEBUG CLS
+GOSUB Main
+
+Resetvar:
+totalpresses=0
+pb1=0
+pb2=0
+pb3=0
+pb4=0
+RETURN
+
+Yellowflash:
+Yellowloop=0
+DO
+LOW Red:HIGH Yellow
+PAUSE 100
+LOW Yellow
+PAUSE 100
+Yellowloop=Yellowloop+1
+LOOP UNTIL Yellowloop=10
+Yellowloop=0
+RETURN
+
+Servoup:
+FOR counter = 1 TO 20
+PULSOUT 12, 750
+PAUSE 20
+NEXT
+RETURN
+
+Servodown:
+FOR counter = 1 TO 20
+PULSOUT 12, 250
+PAUSE 20
+NEXT
+RETURN
+
+
+
+
+

@@ -1,0 +1,293 @@
+'Jonathan Duke
+'Project #6
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+counter VAR Word
+counter1 VAR Word
+rright VAR Nib
+lleft VAR Nib
+Green PIN 15
+Yellow PIN 14
+Red PIN 13
+Right PIN 10
+Left PIN 9
+
+
+LOW Red
+LOW Yellow
+LOW Green
+
+Right = 0
+Left = 0
+OUTL = %10000000
+DIRL = %11111111
+
+DO
+GOSUB Main
+LOOP
+
+Main:
+DO
+IF OUTL=%00000000 THEN
+FOR counter= 0 TO 65535
+IF IN11=1 THEN
+PAUSE 250
+OUTL = %10000000
+GOSUB Main
+ENDIF
+NEXT
+ENDIF
+FOR counter = 0 TO 700
+GOSUB Lzero
+GOSUB Rzero
+IF IN12=1 THEN
+PAUSE 250
+FOR counter = 0 TO 62
+GOSUB Lzero
+GOSUB Rzero
+NEXT
+GOSUB Start
+ENDIF
+NEXT
+OUTL = %00000000
+LOOP
+
+Start:
+DO
+FOR counter = 0 TO 62
+IF counter = 61 THEN
+rright=rright+1
+IF rright = 10 THEN rright=0
+ENDIF
+IF IN12=1 THEN
+PAUSE 200
+GOSUB paws
+ENDIF
+GOSUB Leftcycle
+GOSUB Rightcycle
+NEXT
+IF rright = 9 THEN
+lleft=lleft+1
+IF lleft = 6 THEN
+lleft = 0
+counter1 = counter1 + 1
+IF counter1 = 4 THEN
+counter1=0
+GOSUB LEDcontrol                  '
+GOSUB Main                        ' take out if wanting to run continuously, this limits it to 4 minutes then it resets
+ENDIF
+GOSUB LEDcontrol
+ENDIF
+ENDIF
+LOOP
+
+LeftCycle:
+IF lleft = 0 THEN GOSUB Lzero
+IF lleft = 1 THEN GOSUB Lone
+IF lleft = 2 THEN GOSUB Ltwo
+IF lleft = 3 THEN GOSUB Lthree
+IF lleft = 4 THEN GOSUB Lfour
+IF lleft = 5 THEN GOSUB Lfive
+RETURN
+
+
+RightCycle:
+IF rright = 0 THEN GOSUB Rone
+IF rright = 1 THEN GOSUB Rtwo
+IF rright = 2 THEN GOSUB Rthree
+IF rright = 3 THEN GOSUB Rfour
+IF rright = 4 THEN GOSUB Rfive
+IF rright = 5 THEN GOSUB Rsix
+IF rright = 6 THEN GOSUB Rseven
+IF rright = 7 THEN GOSUB Reight
+IF rright = 8 THEN GOSUB Rnine
+IF rright = 9 THEN GOSUB Rzero
+RETURN
+
+LEDcontrol:
+IF counter1=0 THEN
+LOW Red
+LOW Yellow
+LOW Green
+ENDIF
+IF counter1=1 THEN
+LOW Red
+LOW Yellow
+HIGH Green
+ENDIF
+IF counter1=2 THEN
+LOW Red
+HIGH Yellow
+HIGH Green
+ENDIF
+IF counter1=3 THEN
+HIGH Red
+HIGH Yellow
+HIGH Green
+ENDIF
+RETURN
+
+weeset:
+LOW Red
+LOW Yellow
+LOW Green
+counter1=0
+DO
+FOR counter = 0 TO 2000
+IF OUTL = %00000000 THEN
+DO
+FOR counter=0 TO 65535
+IF IN11=1 THEN
+PAUSE 200
+GOSUB Lzero
+GOSUB Rzero
+GOSUB weeset
+ENDIF
+NEXT
+LOOP
+ENDIF
+GOSUB Lzero
+GOSUB Rzero
+IF IN12=1 THEN
+PAUSE 250
+rright=0
+lleft=0
+FOR counter = 0 TO 62
+GOSUB Lzero
+GOSUB Rzero
+NEXT
+GOSUB Start
+ENDIF
+NEXT
+OUTL = %00000000
+LOOP
+
+paws:
+DO
+FOR counter = 0 TO 700
+IF OUTL = %00000000 THEN
+GOSUB weeset
+ENDIF
+IF IN12=1 THEN
+PAUSE 250
+RETURN
+ENDIF
+IF rright = 0 THEN GOSUB Rone
+IF rright = 1 THEN GOSUB Rtwo
+IF rright = 2 THEN GOSUB Rthree
+IF rright = 3 THEN GOSUB Rfour
+IF rright = 4 THEN GOSUB Rfive
+IF rright = 5 THEN GOSUB Rsix
+IF rright = 6 THEN GOSUB Rseven
+IF rright = 7 THEN GOSUB Reight
+IF rright = 8 THEN GOSUB Rnine
+IF rright = 9 THEN GOSUB Rzero
+IF lleft = 0 THEN GOSUB Lzero
+IF lleft = 1 THEN GOSUB Lone
+IF lleft = 2 THEN GOSUB Ltwo
+IF lleft = 3 THEN GOSUB Lthree
+IF lleft = 4 THEN GOSUB Lfour
+IF lleft = 5 THEN GOSUB Lfive
+IF IN11=1 THEN GOSUB weeset
+NEXT
+OUTL= %00000000
+LOW Red
+LOW Yellow
+LOW Green
+LOOP
+
+Lzero:
+OUTL = %11111100
+LOW Left
+HIGH Left
+RETURN
+
+Lone:
+OUTL = %01100000
+LOW Left
+HIGH Left
+RETURN
+
+Ltwo:
+OUTL = %11011010
+LOW Left
+HIGH Left
+RETURN
+
+Lthree:
+OUTL = %11110010
+LOW Left
+HIGH Left
+RETURN
+
+Lfour:
+OUTL = %01100110
+LOW Left
+HIGH Left
+RETURN
+
+Lfive:
+OUTL = %10110110
+LOW Left
+HIGH Left
+RETURN
+
+Rzero:
+OUTL = %11111100
+LOW Right
+HIGH Right
+RETURN
+
+Rone:
+OUTL = %01100000
+LOW Right
+HIGH Right
+RETURN
+
+Rtwo:
+OUTL = %11011010
+LOW Right
+HIGH Right
+RETURN
+
+Rthree:
+OUTL = %11110010
+LOW Right
+HIGH Right
+RETURN
+
+Rfour:
+OUTL = %01100110
+LOW Right
+HIGH Right
+RETURN
+
+Rfive:
+OUTL = %10110110
+LOW Right
+HIGH Right
+RETURN
+
+Rsix:
+OUTL = %00111110
+LOW Right
+HIGH Right
+RETURN
+
+Rseven:
+OUTL = %11100000
+LOW Right
+HIGH Right
+RETURN
+
+Reight:
+OUTL = %11111110
+LOW Right
+HIGH Right
+RETURN
+
+Rnine:
+OUTL = %11100110
+LOW Right
+HIGH Right
+RETURN

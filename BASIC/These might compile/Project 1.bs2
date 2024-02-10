@@ -1,0 +1,50 @@
+'Jonathan Duke
+'Project #2
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+' Start DO LOOP
+DO
+
+      ' 0-2 N-S
+      '      0-r 1-y 2-g
+      ' 3-5 S-N
+      '      3-r 4-y 5-g
+      ' 6-8 W-E
+      '      6-r 7-y 8-g
+      ' 9-11 E-W Left turn
+      '      9-r 10-y 11-g
+      ' 12-14 E-W
+      '      12-r 13-y 14-g
+' All lights red for 2 sec
+HIGH 0:HIGH 3:HIGH 6:HIGH 9:HIGH 12
+  PAUSE 2000
+' Left arrow E-W start
+LOW 9:HIGH 11:LOW 12:HIGH 14
+' Finish left arrow
+  PAUSE 2000
+LOW 11:HIGH 10
+  PAUSE 2000
+LOW 10:HIGH 9
+' Clear intersection E-W W-E turns green
+  PAUSE 2000
+LOW 12:HIGH 8:HIGH 14
+  PAUSE 2000
+' Finish E-W W-E & clear intersection
+LOW 8:LOW 14:HIGH 7:HIGH 13
+  PAUSE 2000
+LOW 7:LOW 13:HIGH 6:HIGH 12
+  PAUSE 2000
+' N-S S-N turn green and completes a r-g sequence
+LOW 0:LOW 3:HIGH 2:HIGH 5
+  PAUSE 2000
+LOW 2:LOW 5:HIGH 1:HIGH 4
+  PAUSE 2000
+LOW 1:LOW 4:HIGH 0:HIGH 3
+'Finish DO LOOP
+LOOP
+
+
+
+
+
+

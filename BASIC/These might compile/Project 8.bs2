@@ -1,0 +1,228 @@
+'Jonathan Duke
+'Project #8
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+time VAR Word
+counter VAR Word
+billclinton VAR Word
+paws VAR Word
+rright VAR Nib
+lleft VAR Nib
+istg VAR Nib
+Right PIN 14
+Left PIN 15
+DIRL = %11111111
+rright = 0
+lleft = 0
+
+DO
+GOSUB Main
+LOOP
+
+Main:
+DO
+GOSUB racecartime
+GOSUB Leftcycle
+GOSUB Rightcycle
+IF lleft >=3 AND rright >=5 THEN
+FOR counter = 0 TO 20
+GOSUB Leftcycle
+GOSUB Rightcycle
+GOSUB racecartime
+NEXT
+FOR counter= 0 TO 20
+GOSUB racecartime
+NEXT
+ENDIF
+LOOP
+
+
+racecartime:
+HIGH 13
+RCTIME 13, 1, time
+IF time > 1500 THEN
+rright = rright + 1
+IF rright=10 THEN lleft=lleft+1
+IF rright=10 THEN rright = 0
+IF lleft = 4  AND rright = 0 THEN
+GOSUB Servoup
+FOR counter = 0 TO 1500
+GOSUB LFour
+GOSUB Rzero
+NEXT
+GOSUB Servodown
+lleft=0
+rright=0
+GOSUB Main
+ENDIF
+ENDIF
+IF time > 1500 THEN
+DO
+HIGH 13
+RCTIME 13, 1, time
+GOSUB Leftcycle
+GOSUB Rightcycle
+billclinton = billclinton + 1
+IF billclinton = 500 THEN
+billclinton = 0
+GOSUB eightyeight
+ENDIF
+LOOP UNTIL time < 1500
+ENDIF
+RETURN
+
+Leftcycle:
+IF lleft = 0 THEN GOSUB Lzero
+IF lleft = 1 THEN GOSUB Lone
+IF lleft = 2 THEN GOSUB Ltwo
+IF lleft = 3 THEN GOSUB Lthree
+IF lleft = 4 THEN GOSUB Lfour
+RETURN
+
+Rightcycle:
+IF rright = 0 THEN GOSUB Rzero
+IF rright = 1 THEN GOSUB Rone
+IF rright = 2 THEN GOSUB Rtwo
+IF rright = 3 THEN GOSUB Rthree
+IF rright = 4 THEN GOSUB Rfour
+IF rright = 5 THEN GOSUB Rfive
+IF rright = 6 THEN GOSUB Rsix
+IF rright = 7 THEN GOSUB Rseven
+IF rright = 8 THEN GOSUB Reight
+IF rright = 9 THEN GOSUB Rnine
+RETURN
+
+eightyeight:
+OUTL = %11111110
+DO
+LOW Left
+LOW Right
+FOR counter = 0 TO 20
+HIGH 13
+RCTIME 13, 1, time
+NEXT
+HIGH Left
+HIGH Right
+FOR counter = 0 TO 20
+HIGH 13
+RCTIME 13, 1, time
+NEXT
+LOOP UNTIL time < 2750
+RETURN
+
+Servodown:
+FOR counter = 0 TO 20
+PULSOUT 12, 250
+PAUSE 20
+GOSUB LFour
+GOSUB Rzero
+NEXT
+RETURN
+
+Servoup:
+FOR counter = 0 TO 20
+PULSOUT 12, 1250
+PAUSE 20
+IF lleft = 4 AND rright = 0 THEN
+GOSUB Lfour
+GOSUB Rzero
+ENDIF
+NEXT
+RETURN
+
+Lzero:
+OUTL = %11111100
+LOW Left
+HIGH Left
+RETURN
+
+Lone:
+OUTL = %01100000
+LOW Left
+HIGH Left
+RETURN
+
+Ltwo:
+OUTL = %11011010
+LOW Left
+HIGH Left
+RETURN
+
+Lthree:
+OUTL = %11110010
+LOW Left
+HIGH Left
+RETURN
+
+Lfour:
+OUTL = %01100110
+LOW Left
+HIGH Left
+RETURN
+
+Rzero:
+OUTL = %11111100
+LOW Right
+HIGH Right
+RETURN
+
+Rone:
+OUTL = %01100000
+LOW Right
+HIGH Right
+RETURN
+
+Rtwo:
+OUTL = %11011010
+LOW Right
+HIGH Right
+RETURN
+
+Rthree:
+OUTL = %11110010
+LOW Right
+HIGH Right
+RETURN
+
+Rfour:
+OUTL = %01100110
+LOW Right
+HIGH Right
+RETURN
+
+Rfive:
+OUTL = %10110110
+LOW Right
+HIGH Right
+RETURN
+
+Rsix:
+OUTL = %00111110
+LOW Right
+HIGH Right
+RETURN
+
+Rseven:
+OUTL = %11100000
+LOW Right
+HIGH Right
+RETURN
+
+Reight:
+OUTL = %11111110
+LOW Right
+HIGH Right
+RETURN
+
+Rnine:
+OUTL = %11100110
+LOW Right
+HIGH Right
+RETURN
+
+
+
+
+
+
+

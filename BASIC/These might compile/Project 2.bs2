@@ -1,0 +1,219 @@
+'Jonathan Duke
+'Project #2
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+'N-S & S-N
+  'r-2 y-1 g-0
+'E-W & W-E
+  'r-5 y-4 g-3
+'E-W & W-E Left Arrows
+  'r-8 y-7 g-6
+
+sequenceon VAR Word
+buttonstate VAR Word
+counter VAR Word
+
+'Initialization
+sequenceon = 0
+buttonstate = 0
+
+
+DO
+GOSUB Main
+LOOP
+Main:
+'Beginning of entire program
+DO
+sequenceon = 0
+buttonstate = 0
+
+ GOSUB one
+ GOSUB two
+ GOSUB three
+ GOSUB four
+
+'End of DO LOOP/End of program
+LOOP
+
+one:
+'All lights red & clear intersection
+DEBUG ? IN15 : buttonstate = 0
+HIGH 2:HIGH 5:HIGH 14
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0
+  ENDIF
+NEXT
+IF (buttonstate=1 AND sequenceon = 0) THEN GOSUB emergency
+RETURN
+
+
+two:
+'Left turn sequence & clear intersection
+'DEBUG "Left Turn Sequence Start"
+DEBUG ? IN15
+buttonstate = 0
+LOW 14:HIGH 6
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1
+  ELSE
+  sequenceon = 1 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 6:HIGH 7
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 1 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 7:HIGH 14
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+'DEBUG "Left Turn Sequence Stop"
+RETURN
+
+three:
+'E-W W-E sequence & clear intersection
+DEBUG ? IN15
+'DEBUG "E-W W-E Sequence Start"
+LOW 5:HIGH 3
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 3:HIGH 4
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 4:HIGH 5
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+IF (buttonstate=1 AND sequenceon = 0) THEN GOSUB emergency
+'DEBUG "E-W W-E Sequence Stop"
+RETURN
+
+
+
+four:
+'N-S S-N sequence
+
+DEBUG ? IN15
+'DEBUG "N-S S-N Sequence Start"
+buttonstate = 0
+LOW 2:HIGH 0
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 0:HIGH 1
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+LOW 1:HIGH 2
+  FOR counter = 1 TO 100
+  DEBUG ? IN15
+  IF (IN15 = 1) THEN
+  sequenceon = 0 : buttonstate = 1  : DEBUG ? sequenceon : DEBUG ? buttonstate
+  ELSE
+  sequenceon = 0 : DEBUG ? sequenceon
+  ENDIF
+  NEXT
+IF (buttonstate=1 AND sequenceon = 0) THEN GOSUB emergency
+'DEBUG "N-S S-N Sequence Stop"
+
+RETURN
+
+
+
+'Emergency button
+'N-S & S-N
+  'r-2
+'E-W & W-E
+  'y-4
+'E-W & W-E Left Arrows
+  'y-7
+emergency:
+DO
+DEBUG ? IN15
+LOW 5: LOW 14:LOW 2: LOW 4: LOW 7
+DEBUG ? IN15
+HIGH 2: HIGH 4: HIGH 7
+  FOR counter = 1 TO 200
+  IF (IN15 = 1) THEN
+  HIGH 2:HIGH 5:HIGH 14 :LOW 0: LOW 1 : LOW 3 : LOW 4 : LOW 6 : LOW 7
+  PAUSE 4000
+  RETURN
+  ENDIF
+  NEXT
+LOW 2: LOW 4: LOW 7
+  FOR counter = 1 TO 200
+  IF (IN15 = 1) THEN
+  HIGH 2:HIGH 5:HIGH 14 :LOW 0: LOW 1 : LOW 3 : LOW 4 : LOW 6 : LOW 7
+  PAUSE 4000
+  RETURN
+  ENDIF
+  NEXT
+HIGH 2: HIGH 4: HIGH 7
+  FOR counter = 1 TO 200
+  IF (IN15 = 1) THEN
+  HIGH 2:HIGH 5:HIGH 14 :LOW 0: LOW 1 : LOW 3 : LOW 4 : LOW 6 : LOW 7
+  PAUSE 4000
+  RETURN
+  ENDIF
+  NEXT
+LOW 2: LOW 4: LOW 7
+  FOR counter = 1 TO 200
+  IF (IN15 = 1) THEN
+  HIGH 2:HIGH 5:HIGH 14 :LOW 0: LOW 1 : LOW 3 : LOW 4 : LOW 6 : LOW 7
+  PAUSE 4000
+  RETURN
+  ENDIF
+  NEXT
+LOOP UNTIL IN15=1
+RETURN
+
+
+
+
+
+
+
+

@@ -1,0 +1,210 @@
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+'N-S & S-N
+  'r-2 y-1 g-0
+'E-W & W-E
+  'r-5 y-4 g-3
+'E-W & W-E Left Arrows
+  'r-8 y-7 g-6
+sequenceon VAR Word
+buttonstate VAR Word
+Btn             PIN     15
+ workspace VAR Byte
+
+'Beginning of entire program
+DO
+
+   GOSUB Main
+
+Main:
+  ' Try changing the Delay value (255) in BUTTON to see the effect of
+  ' its modes: 0 = no delay; 1-254 = varying delays before auto-repeat;
+  ' 255 = no auto-repeat (only one action per button press)
+  '
+  ' The BUTTON instruction will cause the program to branch to
+  ' No_Press unless P0 = 0
+
+  PAUSE 5
+  BUTTON Btn, 15, 0, 20, workspace, 1, emergency
+  DEBUG "*"
+sequenceon = 0
+buttonstate = 0
+IF (IN15=0) THEN
+ GOSUB one
+ GOSUB two
+ GOSUB one
+ GOSUB three
+ GOSUB one
+ GOSUB four
+ENDIF
+
+IF (IN15=1) THEN
+GOSUB emergency
+ENDIF
+
+'End of DO LOOP/End of program
+LOOP
+
+one:
+'All lights red & clear intersection
+DEBUG ? IN15
+IF (IN15 = 0) THEN
+sequenceon = 1
+HIGH 2:HIGH 5:HIGH 8:LOW 0: LOW 1 :LOW 3 : LOW 4 :LOW 6 :LOW 7
+PAUSE 2000
+sequenceon = 0 : buttonstate = 1
+ELSE
+sequenceon = 0 : buttonstate = 1
+GOSUB emergency
+ENDIF
+
+
+two:
+'Left turn sequence & clear intersection
+DEBUG ? IN15
+IF (IN15 = 0) THEN
+sequenceon = 1
+LOW 8:HIGH 6
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 3000
+LOW 6:HIGH 7
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 3000
+LOW 7:HIGH 8
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 2000
+sequenceon = 0
+ENDIF
+
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate = 1
+GOSUB emergency
+ENDIF
+
+
+three:
+'E-W W-E sequence & clear intersection
+DEBUG ? IN15
+IF (IN15 = 0) THEN
+sequenceon = 1
+LOW 5:HIGH 3
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 4000
+LOW 3:HIGH 4
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 4000
+LOW 4:HIGH 5
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 2000
+sequenceon = 0 : buttonstate = 0
+ENDIF
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate = 1
+GOSUB emergency
+ENDIF
+
+
+four:
+'N-S S-N sequence
+DEBUG ? IN15
+IF (IN15 = 0) THEN
+sequenceon = 1
+LOW 2:HIGH 0
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 4000
+LOW 0:HIGH 1
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 4000
+LOW 1:HIGH 2
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+PAUSE 2000
+sequenceon = 0 : buttonstate = 0
+ENDIF
+DEBUG ? IN15
+IF (IN15=1) THEN
+sequenceon = 0 : buttonstate =  1
+GOSUB emergency
+ENDIF
+
+'Emergency button
+emergency:
+'N-S & S-N
+  'r-2 y-1 g-0
+'E-W & W-E
+  'r-5 y-4 g-3
+'E-W & W-E Left Arrows
+  'r-8 y-7 g-6
+IF (buttonstate = 1) THEN
+DEBUG ? IN15 : DEBUG ? sequenceon : DEBUG ? buttonstate
+IF  (IN15 = 1) THEN
+buttonstate= buttonstate + 1
+ENDIF
+LOW 2:HIGH 4 :HIGH 7
+IF  (IN15 = 1) THEN
+buttonstate= buttonstate + 1
+ENDIF
+PAUSE 2000
+DEBUG ? IN15 : DEBUG ? sequenceon : DEBUG ? buttonstate
+HIGH 2:LOW 4 :LOW 7
+IF  (IN15 = 1) THEN
+buttonstate= buttonstate + 1
+ENDIF
+PAUSE 2000
+DEBUG ? IN15 : DEBUG ? sequenceon : DEBUG ? buttonstate
+LOW 2:HIGH 4 :HIGH 7
+IF  (IN15 = 1) THEN
+buttonstate= buttonstate + 1
+ENDIF
+IF (buttonstate=3)  THEN
+buttonstate = 2
+ENDIF
+PAUSE 2000
+ENDIF
+
+
+
+
+
+
+
+
+
+
+

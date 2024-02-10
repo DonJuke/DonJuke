@@ -1,0 +1,70 @@
+'Jonathan Duke
+'Project #12
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+tomato PIN 12
+weewoo PIN 14
+glock PIN 15
+mmmm VAR Word
+that VAR Byte
+this VAR Byte
+butt VAR Nib
+buttindex VAR Nib
+yamama VAR Word
+russia VAR Word
+counter VAR Word
+diabetes VAR Word
+DIRL=%11111111
+OUTL=%00000000
+that = 0
+this = 0
+LOW weewoo
+FOR counter = 0 TO 127 '
+PULSOUT glock,5
+PAUSE 1
+NEXT
+FOR mmmm = 0 TO 30
+PULSOUT tomato, 1250
+PAUSE 20
+NEXT
+PAUSE 1000
+DO
+GOSUB childwelfare
+LOOP   '
+
+
+
+
+childwelfare:
+IF IN9=1 THEN
+PAUSE 100
+butt=butt+1
+IF butt=6 THEN butt=0
+that=this
+diabetes=0
+LOOKDOWN butt, = [0,1,2,3,4,5], buttindex
+LOOKUP buttindex, [%11111100,%01100000,%11011010,%11110010,%01100110,%10110110], OUTL
+LOOKUP buttindex, [1250,1050,850,650,450,250], russia
+LOOKUP buttindex, [0,1976,2093,2350,2637,2794] ,yamama
+LOOKUP buttindex, [0,20,30,45,65,127], this
+FOR mmmm = that TO this
+IF this > that THEN
+HIGH weewoo
+that = that + 1
+ELSEIF this < that THEN
+LOW weewoo
+that = that - 1
+ENDIF
+PULSOUT glock, 1
+IF diabetes < 20 THEN
+PULSOUT tomato, russia
+PAUSE 20
+ENDIF
+diabetes=diabetes+1
+NEXT
+ENDIF
+DEBUG ? this
+FREQOUT 10, 10, yamama
+RETURN
+
+

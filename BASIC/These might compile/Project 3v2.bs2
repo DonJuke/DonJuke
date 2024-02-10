@@ -1,0 +1,296 @@
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+'Nib allows for numbers up to 15, Byte up to 255, and Word up to 65535
+'pb 1-4 is used for monitoring the number of presses for each push button
+pb1 VAR Nib
+pb2 VAR Nib
+pb3 VAR Nib
+pb4 VAR Nib
+
+'totalpresses monitors the total amount of presses
+totalpresses VAR Byte
+
+'pbnum 1-4 is used to format the required code used when opening the gate
+pb1num VAR Nib
+pb2num VAR Nib
+pb3num VAR Nib
+pb4num VAR Nib
+
+pbtot VAR Nib
+
+'pbnumtotal is used to make sure the inputted press amounts ,(pbnum1-pbnum4), are maxed at 12 presses
+pbnumtotal VAR Byte
+
+'used in FOR NEXT to monitor the push buttons at all times
+counter VAR Word
+'used to run a LED sequences and reduce HIGH and LOW repitition
+Redloop VAR Nib
+Yellowloop VAR Nib
+
+'Variable for emergency loop
+emergency VAR Nib
+
+'Pin Directives, allows for reference of pins using labeled names
+Red PIN 15
+Yellow PIN 14
+Green PIN 13
+
+'initial conditions of LEDs
+HIGH Red
+LOW Yellow
+LOW Green
+
+'Input press amount. CLS clears the DEBUG window
+DEBUG CLS, "Choose amount of presses for Push Button 1: "
+DEBUGIN DEC pb1num
+DEBUG CLS, "Choose amount of presses for Push Button 2: "
+DEBUGIN DEC pb2num
+DEBUG CLS, "Choose amount of presses for Push Button 3: "
+DEBUGIN DEC pb3num
+DEBUG CLS, "Choose amount of presses for Push Button 4: "
+DEBUGIN DEC pb4num
+DEBUG CLS
+
+'Input error-thrower. To make sure a number is between 9 and 12 is used
+pbnumtotal= pb1num+pb2num+pb3num+pb4num
+DEBUG ? pbnumtotal
+IF (pbnumtotal > 12) THEN DEBUG "Error, too many presses, max allowed presses = 12. Restart program"
+IF (pbnumtotal < 9) THEN DEBUG "Error, too many presses, min allowed presses = 9. Restart program"
+
+
+'Loop of main program
+DO
+GOSUB Main
+LOOP
+
+'IN1=pb1 IN2=pb2 IN3=pb3 IN4=pb4 IN0=emergency
+Main:
+Redloop=0
+Yellowloop=0
+
+FOR counter = 1 TO 65535
+' >< means not equal
+IF (IN1=1) AND (pb1 >< pb1num) THEN GOSUB Pone
+IF (IN2=1) AND (pb2 >< pb2num) THEN GOSUB Ptwo
+IF (IN3=1) AND (pb3 >< pb3num) THEN GOSUB Pthree
+IF (IN4=1) AND (pb4 >< pb4num) THEN GOSUB Pfour
+IF (IN1=1) AND (pb1 = pb1num) THEN GOSUB totalpressesadd
+IF (IN2=1) AND (pb2 = pb2num) THEN GOSUB totalpressesadd
+IF (IN3=1) AND (pb3 = pb3num) THEN GOSUB totalpressesadd
+IF (IN4=1) AND (pb4 = pb4num) THEN GOSUB totalpressesadd
+IF (totalpresses = pbnumtotal) THEN GOSUB codecheck
+IF (IN0=1) THEN GOSUB Emergencybutt
+'IF (pb1 = pb1num) AND (pb2 = pb2num) AND (pb3 = pb3num) AND (pb4 = pb4num) AND (pbnumtotal=totalpresses)THEN GOSUB Gate
+
+NEXT
+
+'Pone checks IN1-IN4 and only changes pb1 when IN1=1 and if any other buttons are pressed, it uses a subroutine that adds 1 to totalpresses
+Pone:
+pb1=1
+GOSUB totalpressesadd
+DEBUG ? pb1
+PAUSE 175
+DO
+FOR counter = 1 TO 65535
+IF (IN1=1) THEN GOSUB Poneadd
+IF (IN2=1) THEN GOSUB totalpressesadd
+IF (IN3=1) THEN GOSUB totalpressesadd
+IF (IN4=1) THEN GOSUB totalpressesadd
+IF (pb1=pb1num) THEN GOSUB Main
+IF (totalpresses = pbnumtotal) THEN GOSUB codecheck
+NEXT
+LOOP
+RETURN
+
+'Ptwo checks IN1-IN4 and only changes pb2 when IN2=1 and if any other buttons are pressed, it uses a subroutine that adds 1 to totalpresses
+Ptwo:
+pb2=1
+GOSUB totalpressesadd
+DEBUG ? pb2
+PAUSE 175
+DO
+FOR counter = 1 TO 65535
+IF (IN2=1) THEN GOSUB Ptwoadd
+IF (IN1=1) THEN GOSUB totalpressesadd
+IF (IN3=1) THEN GOSUB totalpressesadd
+IF (IN4=1) THEN GOSUB totalpressesadd
+IF (totalpresses = pbnumtotal) THEN GOSUB codecheck
+IF (pb2 = pb2num) THEN GOSUB Main
+NEXT
+LOOP
+RETURN
+
+'Pthree checks IN1-IN4 and only changes pb3 when IN3=1 and if any other buttons are pressed, it uses a subroutine that adds 1 to totalpresses
+Pthree:
+pb3=1
+GOSUB totalpressesadd
+DEBUG ? pb3
+PAUSE 175
+DO
+FOR counter = 1 TO 65535
+IF (IN3=1) THEN GOSUB Pthreeadd
+IF (IN1=1) THEN GOSUB totalpressesadd
+IF (IN2=1) THEN GOSUB totalpressesadd
+IF (IN4=1) THEN GOSUB totalpressesadd
+IF (totalpresses = pbnumtotal) THEN GOSUB codecheck
+IF (pb3 = pb3num) THEN GOSUB Main
+NEXT
+LOOP
+RETURN
+
+'Pfour checks IN1-IN4 and only changes pb4 when IN4=1 and if any other buttons are pressed, it uses a subroutine that adds 1 to totalpresses
+Pfour:
+pb4=1
+GOSUB totalpressesadd
+DEBUG ? pb4
+PAUSE 175
+DO
+FOR counter = 1 TO 65535
+IF (IN4=1) THEN GOSUB Pfouradd
+IF (IN1=1) THEN GOSUB totalpressesadd
+IF (IN2=1) THEN GOSUB totalpressesadd
+IF (IN3=1) THEN GOSUB totalpressesadd
+IF (totalpresses = pbnumtotal) THEN GOSUB codecheck
+IF (pb4 = pb4num) THEN GOSUB Main
+NEXT
+LOOP
+RETURN
+
+'Poneadd adds 1 to pb1, pb1 is checked against the input press amount for pb1
+Poneadd:
+GOSUB totalpressesadd
+pb1=pb1+1
+DEBUG ? pb1
+IF (totalpresses >= pbnumtotal) THEN GOSUB codecheck
+PAUSE 175
+RETURN
+
+'Ptwoadd adds 1 to pb2, pb2 is checked against the input press amount for pb2
+Ptwoadd:
+GOSUB totalpressesadd
+pb2=pb2+1
+DEBUG ? pb2
+IF (totalpresses >= pbnumtotal) THEN GOSUB codecheck
+PAUSE 175
+RETURN
+
+'Pthreeadd adds 1 to pb3, pb3 is checked against the input press amount for pb3
+Pthreeadd:
+GOSUB totalpressesadd
+pb3=pb3+1
+DEBUG ? pb3
+IF (totalpresses >= pbnumtotal) THEN GOSUB codecheck
+PAUSE 175
+RETURN
+
+'Pfouradd adds 1 to pb4, pb4 is checked against the input press amount for pb4
+Pfouradd:
+GOSUB totalpressesadd
+pb4=pb4+1
+DEBUG ? pb4
+IF (totalpresses >= pbnumtotal) THEN GOSUB codecheck
+PAUSE 175
+RETURN
+
+'totalpressesadd measures and adds one to totalpresses
+totalpressesadd:
+totalpresses=totalpresses+1
+DEBUG CR, ? totalpresses
+PAUSE 175
+RETURN
+
+'Checks to see if the code entered is the stored code
+codecheck:
+pbtot = pb1 + pb2 + pb3 + pb4
+IF (pbtot >< totalpresses) THEN GOSUB youfdup
+IF (pbtot = totalpresses) THEN GOSUB Gate
+totalpresses=0
+pb1=0
+pb2=0
+pb3=0
+pb4=0
+GOSUB Main
+
+'Gate is the LED commands and the servo commands
+Gate:
+Yellowloop=0
+DO
+LOW Red
+HIGH Yellow
+PAUSE 200
+LOW Yellow
+PAUSE 200
+Yellowloop=Yellowloop+1
+LOOP UNTIL Yellowloop=10
+Yellowloop=0
+HIGH Red
+FOR counter = 1 TO 20
+PULSOUT 12, 750
+PAUSE 20
+NEXT
+LOW Red
+HIGH Green
+PAUSE 10000
+LOW Green
+DO
+HIGH Yellow
+PAUSE 200
+LOW Yellow
+PAUSE 200
+Yellowloop=Yellowloop+1
+LOOP UNTIL Yellowloop=10
+Yellowloop=0
+HIGH Red
+FOR counter = 1 TO 20
+PULSOUT 12, 250
+PAUSE 20
+NEXT
+DEBUG CLS
+totalpresses=0
+pb1=0
+pb2=0
+pb3=0
+pb4=0
+RETURN
+
+'Butt
+Emergencybutt:
+DEBUG CLS, "Emergency ON"
+FOR counter = 1 TO 20
+PULSOUT 12, 750
+PAUSE 20
+NEXT
+LOW Red
+HIGH Green
+FOR counter = 1 TO 65535
+IF (IN0=1) THEN
+LOW Green
+HIGH Red
+FOR counter = 1 TO 20
+PULSOUT 12, 250
+PAUSE 20
+NEXT
+DEBUG CLS, "Emergency OFF"
+RETURN
+ENDIF
+NEXT
+RETURN
+
+'it is what it is
+youfdup:
+Redloop=0
+totalpresses=0
+pb1=0
+pb2=0
+pb3=0
+pb4=0
+DO
+LOW Red
+PAUSE 1000
+HIGH Red
+PAUSE 1000
+Redloop=Redloop+1
+LOOP UNTIL Redloop=3
+DEBUG CLS
+GOSUB Main
+

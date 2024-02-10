@@ -1,0 +1,253 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+PAUSE 1000
+DEBUG "Program Running!"
+index VAR Nib
+pb VAR Nib
+time VAR Word
+potvar VAR Nib
+potvar2 VAR Nib
+paws VAR Word
+counter VAR Word
+veryslow VAR Word
+slow VAR Word
+medium VAR Word
+fast VAR Word
+veryfast VAR Word
+
+OUTL = %00000000
+DIRL = %11111111
+pb=0
+DO
+HIGH 13
+IF pb = 0 THEN
+FOR counter = 0 TO 65535
+OUTL = %00000000
+GOSUB Servodown
+DO
+FOR counter = 0 TO 65535
+IF IN15=1 THEN
+PAUSE 250
+pb = pb + 1
+GOSUB Main
+ENDIF
+NEXT
+LOOP
+NEXT
+ENDIF
+LOOP
+
+
+Main:
+DEBUG " main"
+HIGH 13
+
+RCTIME 13, 1, time
+LOOKDOWN time, <= [13, 26, 39, 52, 64], index
+LOOKUP index, [ 1, 2, 3 , 4 ,5 ], potvar
+
+IF pb = 0 THEN
+FOR counter = 0 TO 65535
+OUTL = %00000000
+GOSUB Servodown
+DO
+FOR counter = 0 TO 65535
+IF IN15=1 THEN
+PAUSE 250
+pb = pb + 1
+GOSUB Main
+ENDIF
+NEXT
+LOOP
+NEXT
+ENDIF
+
+IF pb = 1 THEN
+DEBUG "pb1"
+veryslow = 370 '10000
+slow = 296 '8000
+medium = 222' 6000
+fast = 148 ' 4000
+veryfast = 74 '2000
+'DEBUG ? veryslow
+'DEBUG ? veryfast
+GOSUB holyhell
+ENDIF
+
+IF pb = 2 THEN
+OUTL = %11100101
+veryslow = 66 '1750
+slow = 58' 1500
+medium = 46' 1250
+fast = 37 '1000
+veryfast = 28' 750
+'DEBUG ? veryslow
+'DEBUG ? veryfast
+GOSUB holyhell
+ENDIF
+
+IF pb = 3 THEN
+OUTL = %01110001
+veryslow = 20 '650
+slow = 15 '550
+medium = 10 '450
+fast =  5 '350
+veryfast =  1' 250
+'DEBUG ? veryslow
+'DEBUG ? veryfast
+GOSUB holyhell
+ENDIF
+
+Servodown:
+FOR counter = 0 TO 25
+PULSOUT 12, 250
+PAUSE 20
+NEXT
+RETURN
+
+Servoup:
+FOR counter = 0 TO 25
+PULSOUT 12, 1000
+PAUSE 20
+NEXT
+RETURN
+
+holyhell:
+    DO
+
+    GOSUB stupidEEPROM
+IF potvar = 1  THEN
+  DO
+  IF pb=1  THEN OUTL =  %10000100
+  FOR counter = 0 TO 65535
+    GOSUB stupidEEPROM
+    GOSUB Servoup
+    GOSUB stupidEEPROM
+    GOSUB Servodown
+    GOSUB stupidEEPROM
+    FOR counter = 0 TO veryslow
+    IF potvar >< 1 THEN GOSUB holyhell
+      GOSUB stupidEEPROM
+      DEBUG ? counter
+    NEXT
+  NEXT
+  LOOP
+ENDIF
+
+IF potvar = 2  THEN
+  DO
+  IF pb=1  THEN OUTL =  %11010011
+  FOR counter = 0 TO 65535
+    GOSUB stupidEEPROM
+    GOSUB Servoup
+    GOSUB stupidEEPROM
+    GOSUB Servodown
+    GOSUB stupidEEPROM
+    FOR counter = 0 TO slow
+    IF potvar >< 2 THEN GOSUB holyhell
+      GOSUB stupidEEPROM
+      DEBUG ? counter
+    NEXT
+  NEXT
+  LOOP
+ENDIF
+
+IF potvar = 3  THEN
+  DO
+  IF pb=1 THEN OUTL = %11010110
+  FOR counter = 0 TO 65535
+    GOSUB stupidEEPROM
+    GOSUB Servoup
+    GOSUB stupidEEPROM
+    GOSUB Servodown
+    GOSUB stupidEEPROM
+    FOR counter = 0 TO medium
+    IF potvar >< 3 THEN GOSUB holyhell
+      GOSUB stupidEEPROM
+      DEBUG ? counter
+    NEXT
+  NEXT
+  LOOP
+ENDIF
+
+IF potvar = 4  THEN
+  DO
+  IF pb=1 THEN OUTL = %10110100
+  FOR counter = 0 TO 65535
+    GOSUB stupidEEPROM
+    GOSUB Servoup
+    GOSUB stupidEEPROM
+    GOSUB Servodown
+    GOSUB stupidEEPROM
+    FOR counter = 0 TO fast
+    IF potvar >< 4 THEN GOSUB holyhell
+      GOSUB stupidEEPROM
+      DEBUG ? counter
+    NEXT
+  NEXT
+  LOOP
+ENDIF
+
+IF potvar = 5  THEN
+  DO
+  IF pb=1 THEN OUTL = %01110110
+  FOR counter = 0 TO 65535
+    GOSUB stupidEEPROM
+    GOSUB Servoup
+    GOSUB stupidEEPROM
+    GOSUB Servodown
+    GOSUB stupidEEPROM
+    FOR counter = 0 TO veryfast
+    IF potvar >< 5 THEN GOSUB holyhell
+      GOSUB stupidEEPROM
+      DEBUG ? counter
+    NEXT
+  NEXT
+  LOOP
+ENDIF
+
+
+   LOOP
+
+stupidEEPROM:
+        potvar = potvar2
+        HIGH 13
+        RCTIME 13, 1, time
+        LOOKDOWN time, <= [13, 26, 39, 52, 64], index
+        LOOKUP index, [ 1, 2, 3 , 4 ,5 ], potvar
+        'DEBUG ? potvar
+        'DEBUG ? time
+        'IF potvar >< potvar2 THEN GOSUB holyhell
+        'DEBUG ? pb
+        IF IN15=1 THEN
+        PAUSE 250
+        pb= pb + 1
+        'DEBUG ? pb
+        IF pb = 4 THEN pb = 0
+        GOSUB Main
+        ENDIF
+        RETURN
+
+        HIGH 13
+
+        RCTIME 13, 1, time
+        LOOKDOWN time, <= [13, 26, 39, 52, 64], index
+        LOOKUP index, [ 1, 2, 3 , 4 ,5 ], potvar
+        'DEBUG ? potvar
+
+        IF IN15=1 THEN
+        PAUSE 250
+        pb= pb + 1
+        'DEBUG ? pb
+        IF pb = 4 THEN pb = 0
+        GOSUB Main
+        ENDIF
+
+
+
+
+
+
+
+
+
