@@ -3,6 +3,8 @@ from time import sleep
 VRx = ADC(25)        # create an ADC object acting on a pin
 VRy = ADC(26)        # create an ADC object acting on a pin
 SW = ADC(27)        # create an ADC object acting on a pin
+VRx.atten(ADC.ATTN_11DB)
+VRy.atten(ADC.ATTN_11DB)
 
 
 def map_range(x, in_min, in_max, out_min, out_max):
